@@ -12,7 +12,8 @@ MBGL_DEFINE_ENUM(SourceType, {
     { SourceType::Video, "video" },
     { SourceType::Annotations, "annotations" },
     { SourceType::Image, "image" },
-    { SourceType::CustomVector, "customvector" }
+    { SourceType::CustomVector, "customvector" },
+    { SourceType::SMap_Poi, "smap_poi"}
 });
 
 MBGL_DEFINE_ENUM(VisibilityType, {

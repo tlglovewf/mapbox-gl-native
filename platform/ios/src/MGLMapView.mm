@@ -320,6 +320,17 @@ public:
     return self;
 }
 
+- (instancetype)initWithFrame:(CGRect)frame styleJson:(nullable NSString*)styleJson
+{
+    if (self = [super initWithFrame:frame])
+    {
+        [self commonInit];
+        
+        _mbglMap->getStyle().loadJSON( [styleJson cStringUsingEncoding: NSUTF8StringEncoding]);
+    }
+    return self;
+}
+
 - (instancetype)initWithCoder:(nonnull NSCoder *)decoder
 {
     if (self = [super initWithCoder:decoder])
@@ -456,10 +467,10 @@ public:
 
     // setup logo
     //
-    UIImage *logo = [MGLMapView resourceImageNamed:@"mapbox"];
+    UIImage *logo = [MGLMapView resourceImageNamed:@"mapbox_helmet"];
     _logoView = [[UIImageView alloc] initWithImage:logo];
     _logoView.accessibilityTraits = UIAccessibilityTraitStaticText;
-    _logoView.accessibilityLabel = NSLocalizedStringWithDefaultValue(@"LOGO_A11Y_LABEL", nil, nil, @"Mapbox", @"Accessibility label");
+    _logoView.accessibilityLabel = NSLocalizedStringWithDefaultValue(@"LOGO_A11Y_LABEL", nil, nil, @"Fastmap SDK", @"Accessibility label");
     _logoView.translatesAutoresizingMaskIntoConstraints = NO;
     [self addSubview:_logoView];
     _logoViewConstraints = [NSMutableArray array];
@@ -2390,7 +2401,7 @@ public:
 {
     _showsScale = showsScale;
     self.scaleBar.hidden = !showsScale;
-
+    self.attributionButton.hidden = FALSE;
     if (showsScale)
     {
         [self updateScaleBar];

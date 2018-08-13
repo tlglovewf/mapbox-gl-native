@@ -73,7 +73,7 @@ public final class CameraPosition implements Parcelable {
    * @throws IllegalArgumentException if tilt is outside the range of 0 to 90 degrees inclusive.
    */
   @Keep
-  CameraPosition(LatLng target, double zoom, double tilt, double bearing) {
+  public CameraPosition(LatLng target, double zoom, double tilt, double bearing) {
     this.target = target;
     this.bearing = bearing;
     this.tilt = tilt;

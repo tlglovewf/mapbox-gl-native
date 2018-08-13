@@ -11,9 +11,11 @@ import android.support.annotation.CallSuper;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.support.annotation.UiThread;
 import android.support.v4.util.LongSparseArray;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -37,6 +39,7 @@ import com.mapbox.mapboxsdk.camera.CameraPosition;
 import com.mapbox.mapboxsdk.camera.CameraUpdateFactory;
 import com.mapbox.mapboxsdk.constants.MapboxConstants;
 import com.mapbox.mapboxsdk.constants.Style;
+import com.mapbox.mapboxsdk.geometry.LatLng;
 import com.mapbox.mapboxsdk.maps.renderer.MapRenderer;
 import com.mapbox.mapboxsdk.maps.renderer.glsurfaceview.GLSurfaceViewMapRenderer;
 import com.mapbox.mapboxsdk.maps.renderer.textureview.TextureViewMapRenderer;
@@ -49,6 +52,12 @@ import com.mapbox.mapboxsdk.utils.BitmapUtils;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileReader;
+import java.io.InputStreamReader;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.ref.WeakReference;
@@ -95,6 +104,8 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
   private MapKeyListener mapKeyListener;
   private MapZoomButtonController mapZoomButtonController;
   private Bundle savedInstanceState;
+
+  private String styleJsonPath;
 
   @UiThread
   public MapView(@NonNull Context context) {
@@ -147,6 +158,7 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
     getViewTreeObserver().addOnGlobalLayoutListener(new MapViewLayoutListener(this, options));
   }
 
+  @RequiresApi(api = Build.VERSION_CODES.KITKAT)
   private void initialiseMap() {
     Context context = getContext();
     nativeMapView.addOnMapChangedListener(mapCallback);
@@ -214,6 +226,38 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
     } else {
       mapboxMap.onRestoreInstanceState(savedInstanceState);
     }
+
+    if(!styleJsonPath.isEmpty()) {
+      File file = new File(styleJsonPath);
+
+      String content = txt2String(file);
+
+      mapboxMap.setStyleJson(content);
+
+      mapboxMap.setMinZoomPreference(1);
+      mapboxMap.setMaxZoomPreference(17);
+    }
+  }
+
+
+  public void LoadStyleJson(String jsonPath){
+    styleJsonPath = jsonPath;
+  }
+
+
+  public static String txt2String(File file){
+    StringBuilder result = new StringBuilder();
+    try{
+      BufferedReader br = new BufferedReader(new FileReader(file));//构造一个BufferedReader类来读取文件
+      String s = null;
+      while((s = br.readLine())!=null){//使用readLine方法，一次读一行
+        result.append(s);
+      }
+      br.close();
+    }catch(Exception e){
+      e.printStackTrace();
+    }
+    return result.toString();
   }
 
   private FocalPointChangeListener createFocalPointChangeListener() {
@@ -700,7 +744,7 @@ public class MapView extends FrameLayout implements NativeMapView.ViewCallback {
     return mapGestureDetector != null;
   }
 
-  MapboxMap getMapboxMap() {
+  public MapboxMap getMapboxMap() {
     return mapboxMap;
   }
 

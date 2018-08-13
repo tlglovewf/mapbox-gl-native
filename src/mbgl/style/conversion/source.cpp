@@ -8,6 +8,7 @@
 #include <mbgl/style/sources/raster_dem_source.hpp>
 #include <mbgl/style/sources/vector_source.hpp>
 #include <mbgl/style/sources/image_source.hpp>
+#include <mbgl/style/sources/smap_sources/smap_poi_source.hpp>
 #include <mbgl/util/geo.hpp>
 
 namespace mbgl {
@@ -89,6 +90,17 @@ static optional<std::unique_ptr<Source>> convertVectorSource(const std::string& 
     return { std::make_unique<VectorSource>(id, std::move(*urlOrTileset)) };
 }
 
+static optional<std::unique_ptr<Source>> convertSMapPoiSource(const std::string& id,
+                                                                  const Convertible& value,
+                                                                  Error& error){
+    optional<variant<std::string, Tileset>> urlOrTileset = convertURLOrTileset(value, error);
+    if (!urlOrTileset) {
+        return nullopt;
+    }
+    
+    return { std::make_unique<SMap_Poi_Source>(id, std::move(*urlOrTileset)) };
+}
+    
 static optional<std::unique_ptr<Source>> convertGeoJSONSource(const std::string& id,
                                                               const Convertible& value,
                                                               Error& error) {
@@ -189,7 +201,10 @@ optional<std::unique_ptr<Source>> Converter<std::unique_ptr<Source>>::operator()
         return convertGeoJSONSource(id, value, error);
     } else if (*type == "image") {
         return convertImageSource(id, value, error);
-    } else {
+    } else if (*type == "smap_poi"){
+        return convertSMapPoiSource(id, value, error);
+    }
+    else {
         error.message = "invalid source type";
         return nullopt;
     }

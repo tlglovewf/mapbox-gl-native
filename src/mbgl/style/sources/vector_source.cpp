@@ -45,34 +45,51 @@ void VectorSource::loadDescription(FileSource& fileSource) {
     }
 
     const std::string& url = urlOrTileset.get<std::string>();
-    req = fileSource.request(Resource::source(url), [this, url](Response res) {
-        if (res.error) {
-            observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error(res.error->message)));
-        } else if (res.notModified) {
-            return;
-        } else if (res.noContent) {
-            observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error("unexpectedly empty TileJSON")));
-        } else {
-            conversion::Error error;
-            optional<Tileset> tileset = conversion::convertJSON<Tileset>(*res.data, error);
-            if (!tileset) {
-                observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error(error.message)));
+    
+    if(!util::mapbox::isMapboxURL(url))
+    {
+        printf("http vector_source url : %s\n",url.c_str());
+        std::vector<std::string> urls;
+        urls.push_back(url);
+        Tileset tileset(urls);
+        tileset.zoomRange.min = 1;
+        tileset.zoomRange.max = 20;
+        //        tileset.scheme = mbgl::Tileset::Scheme::TMS;
+        baseImpl = makeMutable<Impl>(impl(), tileset);
+        
+        fileSource.supportsCacheOnlyRequests();
+    }
+    else
+    {
+        req = fileSource.request(Resource::source(url), [this, url](Response res) {
+            if (res.error) {
+                observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error(res.error->message)));
+            } else if (res.notModified) {
                 return;
+            } else if (res.noContent) {
+                observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error("unexpectedly empty TileJSON")));
+            } else {
+                conversion::Error error;
+                optional<Tileset> tileset = conversion::convertJSON<Tileset>(*res.data, error);
+                if (!tileset) {
+                    observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error(error.message)));
+                    return;
+                }
+                
+                util::mapbox::canonicalizeTileset(*tileset, url, getType(), util::tileSize);
+                bool changed = impl().getTileset() != *tileset;
+                
+                baseImpl = makeMutable<Impl>(impl(), *tileset);
+                loaded = true;
+                
+                observer->onSourceLoaded(*this);
+                
+                if (changed) {
+                    observer->onSourceChanged(*this);
+                }
             }
-
-            util::mapbox::canonicalizeTileset(*tileset, url, getType(), util::tileSize);
-            bool changed = impl().getTileset() != *tileset;
-
-            baseImpl = makeMutable<Impl>(impl(), *tileset);
-            loaded = true;
-
-            observer->onSourceLoaded(*this);
-
-            if (changed) {
-                observer->onSourceChanged(*this);
-            }
-        }
-    });
+        });
+    }
 }
 
 } // namespace style

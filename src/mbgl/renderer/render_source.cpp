@@ -33,6 +33,8 @@ std::unique_ptr<RenderSource> RenderSource::create(Immutable<Source::Impl> impl)
         return std::make_unique<RenderImageSource>(staticImmutableCast<ImageSource::Impl>(impl));
     case SourceType::CustomVector:
         return std::make_unique<RenderCustomGeometrySource>(staticImmutableCast<CustomGeometrySource::Impl>(impl));
+    case SourceType::SMap_Poi:
+        return std::make_unique<RenderCustomGeometrySource>(staticImmutableCast<CustomGeometrySource::Impl>(impl));
     }
 
     // Not reachable, but placate GCC.

@@ -168,6 +168,8 @@ MGL_EXPORT IB_DESIGNABLE
  */
 - (instancetype)initWithFrame:(CGRect)frame styleURL:(nullable NSURL *)styleURL;
 
+- (instancetype)initWithFrame:(CGRect)frame styleJson:(nullable NSString*)styleJson;
+
 #pragma mark Accessing the Delegate
 
 /**

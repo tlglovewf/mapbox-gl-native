@@ -137,6 +137,7 @@ OfflineRegionStatus OfflineDownload::getStatus() const {
         case SourceType::Video:
         case SourceType::Annotations:
         case SourceType::CustomVector:
+        case SourceType::SMap_Poi:
             break;
         }
     }
@@ -229,6 +230,7 @@ void OfflineDownload::activateDownload() {
             case SourceType::Video:
             case SourceType::Annotations:
             case SourceType::CustomVector:
+            case SourceType::SMap_Poi:
                 break;
             }
         }

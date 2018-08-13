@@ -569,6 +569,7 @@ set(MBGL_CORE_FILES
     include/mbgl/style/sources/raster_dem_source.hpp
     include/mbgl/style/sources/raster_source.hpp
     include/mbgl/style/sources/vector_source.hpp
+    include/mbgl/style/sources/smap_sources/smap_poi_source.hpp
     src/mbgl/style/sources/custom_geometry_source.cpp
     src/mbgl/style/sources/custom_geometry_source_impl.cpp
     src/mbgl/style/sources/custom_geometry_source_impl.hpp
@@ -583,9 +584,10 @@ set(MBGL_CORE_FILES
     src/mbgl/style/sources/raster_source_impl.cpp
     src/mbgl/style/sources/raster_source_impl.hpp
     src/mbgl/style/sources/vector_source.cpp
+    src/mbgl/style/sources/smap_sources/smap_poi_source.cpp
     src/mbgl/style/sources/vector_source_impl.cpp
     src/mbgl/style/sources/vector_source_impl.hpp
-
+    src/mbgl/style/sources/smap_sources/smap_poi_source_impl.cpp
     # text
     src/mbgl/text/bidi.hpp
     src/mbgl/text/check_max_angle.cpp

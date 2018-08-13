@@ -15,7 +15,12 @@ enum class SourceType : uint8_t {
     Video,
     Annotations,
     Image,
-    CustomVector
+    CustomVector,
+    
+    /*
+     *  add smap_source_type
+     */
+    SMap_Poi
 };
 
 enum class VisibilityType : bool {
