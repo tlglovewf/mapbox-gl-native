@@ -6,6 +6,7 @@
 #include <mbgl/storage/file_source.hpp>
 #include <mbgl/util/mapbox.hpp>
 #include <mbgl/util/constants.hpp>
+#include <mbgl/util/exception.hpp>
 
 namespace mbgl {
 namespace style {
@@ -45,7 +46,6 @@ void VectorSource::loadDescription(FileSource& fileSource) {
     }
 
     const std::string& url = urlOrTileset.get<std::string>();
-    
     if(!util::mapbox::isMapboxURL(url))
     {
         printf("http vector_source url : %s\n",url.c_str());
@@ -61,10 +61,18 @@ void VectorSource::loadDescription(FileSource& fileSource) {
     }
     else
     {
-        req = fileSource.request(Resource::source(url), [this, url](Response res) {
-            if (res.error) {
-                observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error(res.error->message)));
-            } else if (res.notModified) {
+    req = fileSource.request(Resource::source(url), [this, url](Response res) {
+        if (res.error) {
+            observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error(res.error->message)));
+        } else if (res.notModified) {
+            return;
+        } else if (res.noContent) {
+            observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error("unexpectedly empty TileJSON")));
+        } else {
+            conversion::Error error;
+            optional<Tileset> tileset = conversion::convertJSON<Tileset>(*res.data, error);
+            if (!tileset) {
+                observer->onSourceError(*this, std::make_exception_ptr(util::StyleParseException(error.message)));
                 return;
             } else if (res.noContent) {
                 observer->onSourceError(*this, std::make_exception_ptr(std::runtime_error("unexpectedly empty TileJSON")));

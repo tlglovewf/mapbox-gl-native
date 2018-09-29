@@ -30,13 +30,13 @@ public:
     EvaluationContext(float zoom_, GeometryTileFeature const * feature_) :
         zoom(zoom_), feature(feature_)
     {}
-    EvaluationContext(optional<float> zoom_, GeometryTileFeature const * feature_, optional<double> heatmapDensity_) :
-        zoom(std::move(zoom_)), feature(feature_), heatmapDensity(std::move(heatmapDensity_))
+    EvaluationContext(optional<float> zoom_, GeometryTileFeature const * feature_, optional<double> colorRampParameter_) :
+        zoom(std::move(zoom_)), feature(feature_), colorRampParameter(std::move(colorRampParameter_))
     {}
     
     optional<float> zoom;
     GeometryTileFeature const * feature;
-    optional<double> heatmapDensity;
+    optional<double> colorRampParameter;
 };
 
 template <typename T>
@@ -118,7 +118,6 @@ enum class Kind : int32_t {
     Coalesce,
     CompoundExpression,
     Literal,
-    ArrayAssertion,
     At,
     Interpolate,
     Assertion,
@@ -151,7 +150,7 @@ public:
     Kind getKind() const { return kind; };
     type::Type getType() const { return type; };
     
-    EvaluationResult evaluate(optional<float> zoom, const Feature& feature, optional<double> heatmapDensity) const;
+    EvaluationResult evaluate(optional<float> zoom, const Feature& feature, optional<double> colorRampParameter) const;
 
     /**
      * Statically analyze the expression, attempting to enumerate possible outputs. Returns

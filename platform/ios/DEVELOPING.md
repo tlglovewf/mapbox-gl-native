@@ -36,14 +36,7 @@ Install [jazzy](https://github.com/realm/jazzy) for generating API documentation
 [sudo] gem install jazzy
 ```
 
-Build and package the SDK by using one of the following commands:
-
-* `make ipackage` builds both dynamic and static frameworks in the Debug configuration for devices and the iOS Simulator.
-* `make iframework` builds a dynamic framework in the Debug configuration for devices and the iOS Simulator. The CocoaPods pod downloads the output of this target.
-* `make ipackage-sim` builds a dynamic framework in the Debug configuration for the iOS simulator. This is the fastest target.
-* `make ipackage-strip` builds both dynamic and static frameworks in the Debug configuration, stripped of debug symbols, for devices and the iOS Simulator.
-
-You can customize the build output by passing the following arguments into the `make` invocation:
+Build and package the SDK by using the `make iframework` command. You can customize the build output by passing the following arguments into the `make` invocation:
 
 * `BUILDTYPE=Release` will optimize for distribution. Defaults to `Debug`.
 * `BUILD_DEVICE=false` builds only for the iOS Simulator.
@@ -84,6 +77,7 @@ To add an Objective-C header or implementation file to the iOS maps SDK:
 1. Audit new headers for nullability. Typically, you will wrap a header with `NS_ASSUME_NONNULL_BEGIN` and `NS_ASSUME_NONNULL_END`.
 1. _(Optional.)_ If it’s a public header, change its visibility from Project to Public and import it in [the iOS SDK’s umbrella header](./src/Mapbox.h).
 1. _(Optional.)_ If the file would also be used by the macOS maps SDK, make sure it’s in [platform/darwin/src/](../darwin/src/), then consult [the companion macOS document](../macos/DEVELOPING.md#adding-a-source-code-file) for further instructions.
+1. Run `scripts/generate-cmake-files.js` to update the generated source file list for third party build systems.
 
 ### Adding a resource
 
