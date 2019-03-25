@@ -7,11 +7,12 @@ namespace mbgl {
 namespace shaders {
 
 const char* circle::name = "circle";
-const char* circle::vertexSource = source() + 4416;
-const char* circle::fragmentSource = source() + 8666;
+//const char* circle::vertexSource = source() + 4416;
+//const char* circle::fragmentSource = source() + 8666;
 
 // Uncompressed source of circle.vertex.glsl:
-/*
+const char* circle::vertexSource = R"MBGL_SHADER(
+ 
 uniform mat4 u_matrix;
 uniform bool u_scale_with_map;
 uniform bool u_pitch_with_map;
@@ -83,7 +84,13 @@ varying lowp float stroke_opacity;
 uniform lowp float u_stroke_opacity;
 #endif
 
-
+#ifndef HAS_UNIFORM_u_height
+uniform lowp float a_height_t;
+attribute highp vec2 a_height;
+#else
+uniform highp float u_height;
+#endif
+    
 varying vec3 v_data;
 
 void main(void) {
@@ -136,7 +143,12 @@ void main(void) {
     lowp float stroke_opacity = u_stroke_opacity;
 #endif
 
-
+#ifndef HAS_UNIFORM_u_height
+    highp float height = unpack_mix_vec2(a_height, a_height_t);
+#else
+    highp float height = u_height;
+#endif
+    
     // unencode the extrusion vector that we snuck into the a_pos vector
     vec2 extrude = vec2(mod(a_pos, 2.0) * 2.0 - 1.0);
 
@@ -155,9 +167,9 @@ void main(void) {
             corner_position += extrude * (radius + stroke_width) * u_extrude_scale * (projected_center.w / u_camera_to_center_distance);
         }
 
-        gl_Position = u_matrix * vec4(corner_position, 0, 1);
+        gl_Position = u_matrix * vec4(corner_position, height, 1);
     } else {
-        gl_Position = u_matrix * vec4(circle_center, 0, 1);
+        gl_Position = u_matrix * vec4(circle_center, height, 1);
 
         if (u_scale_with_map) {
             gl_Position.xy += extrude * (radius + stroke_width) * u_extrude_scale * u_camera_to_center_distance;
@@ -165,19 +177,17 @@ void main(void) {
             gl_Position.xy += extrude * (radius + stroke_width) * u_extrude_scale * gl_Position.w;
         }
     }
-
     // This is a minimum blur distance that serves as a faux-antialiasing for
     // the circle. since blur is a ratio of the circle's size and the intent is
     // to keep the blur at roughly 1px, the two are inversely related.
     lowp float antialiasblur = 1.0 / DEVICE_PIXEL_RATIO / (radius + stroke_width);
 
     v_data = vec3(extrude.x, extrude.y, antialiasblur);
-}
+})MBGL_SHADER";
 
-*/
 
 // Uncompressed source of circle.fragment.glsl:
-/*
+const char* circle::fragmentSource = R"MBGL_SHADER(
 
 #ifndef HAS_UNIFORM_u_color
 varying highp vec4 color;
@@ -286,9 +296,7 @@ void main() {
 #ifdef OVERDRAW_INSPECTOR
     gl_FragColor = vec4(1.0);
 #endif
-}
-
-*/
+})MBGL_SHADER";
 
 } // namespace shaders
 } // namespace mbgl

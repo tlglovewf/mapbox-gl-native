@@ -105,6 +105,9 @@ public:
     void setCircleStrokeOpacityTransition(const TransitionOptions&);
     TransitionOptions getCircleStrokeOpacityTransition() const;
 
+    PropertyValue<float> getCircleHeight()const;
+    void setCircleHeight(PropertyValue<float>);
+    
     // Private implementation
 
     class Impl;

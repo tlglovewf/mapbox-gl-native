@@ -400,6 +400,21 @@ TransitionOptions CircleLayer::getCircleStrokeOpacityTransition() const {
     return impl().paint.template get<CircleStrokeOpacity>().options;
 }
 
+PropertyValue<float> CircleLayer::getCircleHeight()const
+{
+    return impl().paint.template get<CircleHeight>().value;
+}
+    
+void CircleLayer::setCircleHeight(PropertyValue<float> value)
+{
+    if (value == getCircleHeight())
+        return;
+    auto impl_ = mutableImpl();
+    impl_->paint.template get<CircleHeight>().value = value;
+    baseImpl = std::move(impl_);
+    observer->onLayerChanged(*this);
+}
+    
 using namespace conversion;
 
 optional<Error> CircleLayer::setPaintProperty(const std::string& name, const Convertible& value) {
@@ -427,6 +442,7 @@ optional<Error> CircleLayer::setPaintProperty(const std::string& name, const Con
         CircleStrokeWidthTransition,
         CircleStrokeColorTransition,
         CircleStrokeOpacityTransition,
+        CircleHeight
     };
 
     Property property = Property::Unknown;
@@ -541,7 +557,10 @@ optional<Error> CircleLayer::setPaintProperty(const std::string& name, const Con
             property = Property::CircleStrokeOpacityTransition;
         }
         break;
-    
+        case util::hashFNV1a("circle-height"):
+            if(name == "circle-height"){
+                property = Property::CircleHeight;
+            }
     }
 
     if (property == Property::Unknown) {
@@ -650,7 +669,25 @@ optional<Error> CircleLayer::setPaintProperty(const std::string& name, const Con
         
     }
     
-
+    if (property == Property::CircleHeight) {
+        Error error;
+        optional<PropertyValue<float>> typedValue = convert<PropertyValue<float>>(value, error, true, false);
+        if (!typedValue) {
+            return error;
+        }
+        
+        if (property == Property::CircleHeight) {
+            setCircleHeight(*typedValue);
+            return nullopt;
+        }
+        
+        if (property == Property::CircleHeight) {
+            setCircleHeight(*typedValue);
+            return nullopt;
+        }
+        
+    }
+    
     Error error;
     optional<TransitionOptions> transition = convert<TransitionOptions>(value, error);
     if (!transition) {

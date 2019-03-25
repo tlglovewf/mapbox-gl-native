@@ -7,11 +7,11 @@ namespace mbgl {
 namespace shaders {
 
 const char* line_pattern::name = "line_pattern";
-const char* line_pattern::vertexSource = source() + 52829;
-const char* line_pattern::fragmentSource = source() + 57905;
-
+//const char* line_pattern::vertexSource = source() + 52829;
+//const char* line_pattern::fragmentSource = source() + 57905;
+const char* line_pattern::vertexSource = R"MBGL_SHADER(
 // Uncompressed source of line_pattern.vertex.glsl:
-/*
+
 // floor(127 / 2) == 63.0
 // the maximum allowed miter limit is 2.0 at the moment. the extrude normal is
 // stored in a byte (-128..127). we scale regular normals up to length 63, but
@@ -195,11 +195,11 @@ void main() {
     v_linesofar = a_linesofar;
     v_width2 = vec2(outset, inset);
 }
+ )MBGL_SHADER";
 
-*/
-
+const char* line_pattern::fragmentSource = R"MBGL_SHADER(
 // Uncompressed source of line_pattern.fragment.glsl:
-/*
+
 uniform vec2 u_texsize;
 uniform float u_fade;
 uniform mediump vec4 u_scale;
@@ -309,8 +309,7 @@ void main() {
     gl_FragColor = vec4(1.0);
 #endif
 }
-
-*/
+)MBGL_SHADER";
 
 } // namespace shaders
 } // namespace mbgl

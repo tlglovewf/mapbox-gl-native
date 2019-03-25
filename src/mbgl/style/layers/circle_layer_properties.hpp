@@ -55,7 +55,10 @@ struct CircleStrokeColor : DataDrivenPaintProperty<Color, attributes::a_stroke_c
 struct CircleStrokeOpacity : DataDrivenPaintProperty<float, attributes::a_stroke_opacity, uniforms::u_stroke_opacity> {
     static float defaultValue() { return 1; }
 };
-
+    
+struct CircleHeight : DataDrivenPaintProperty<float, attributes::a_height, uniforms::u_height> {
+    static float defaultValue() { return 0; }
+};
 class CirclePaintProperties : public Properties<
     CircleRadius,
     CircleColor,
@@ -67,7 +70,8 @@ class CirclePaintProperties : public Properties<
     CirclePitchAlignment,
     CircleStrokeWidth,
     CircleStrokeColor,
-    CircleStrokeOpacity
+    CircleStrokeOpacity,
+    CircleHeight
 > {};
 
 } // namespace style

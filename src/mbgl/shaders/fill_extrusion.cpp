@@ -7,11 +7,13 @@ namespace mbgl {
 namespace shaders {
 
 const char* fill_extrusion::name = "fill_extrusion";
-const char* fill_extrusion::vertexSource = source() + 27816;
-const char* fill_extrusion::fragmentSource = source() + 30616;
+//const char* fill_extrusion::vertexSource = source() + 27816;
+//const char* fill_extrusion::fragmentSource = source() + 30616;
 
 // Uncompressed source of fill_extrusion.vertex.glsl:
-/*
+const char* fill_extrusion::vertexSource = R"MBGL_SHADER(
+ 
+
 uniform mat4 u_matrix;
 uniform vec3 u_lightcolor;
 uniform lowp vec3 u_lightpos;
@@ -109,12 +111,10 @@ void main() {
     v_color.r += clamp(color.r * directional * u_lightcolor.r, mix(0.0, 0.3, 1.0 - u_lightcolor.r), 1.0);
     v_color.g += clamp(color.g * directional * u_lightcolor.g, mix(0.0, 0.3, 1.0 - u_lightcolor.g), 1.0);
     v_color.b += clamp(color.b * directional * u_lightcolor.b, mix(0.0, 0.3, 1.0 - u_lightcolor.b), 1.0);
-}
-
-*/
+})MBGL_SHADER";
 
 // Uncompressed source of fill_extrusion.fragment.glsl:
-/*
+const char* fill_extrusion::fragmentSource = R"MBGL_SHADER(
 varying vec4 v_color;
 
 void main() {
@@ -123,9 +123,8 @@ void main() {
 #ifdef OVERDRAW_INSPECTOR
     gl_FragColor = vec4(1.0);
 #endif
-}
+})MBGL_SHADER";
 
-*/
 
 } // namespace shaders
 } // namespace mbgl

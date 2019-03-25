@@ -7,11 +7,13 @@ namespace mbgl {
 namespace shaders {
 
 const char* fill::name = "fill";
-const char* fill::vertexSource = source() + 18105;
-const char* fill::fragmentSource = source() + 18811;
+//const char* fill::vertexSource = source() + 18105;
+//const char* fill::fragmentSource = source() + 18811;
+
+    
 
 // Uncompressed source of fill.vertex.glsl:
-/*
+const char* fill::vertexSource = R"MBGL_SHADER(
 attribute vec2 a_pos;
 
 uniform mat4 u_matrix;
@@ -52,19 +54,16 @@ void main() {
 
 
     gl_Position = u_matrix * vec4(a_pos, 0, 1);
-}
+ } )MBGL_SHADER";
 
-*/
 
 // Uncompressed source of fill.fragment.glsl:
-/*
-
+const char* fill::fragmentSource = R"MBGL_SHADER(
 #ifndef HAS_UNIFORM_u_color
 varying highp vec4 color;
 #else
 uniform highp vec4 u_color;
 #endif
-
 
 #ifndef HAS_UNIFORM_u_opacity
 varying lowp float opacity;
@@ -72,27 +71,23 @@ varying lowp float opacity;
 uniform lowp float u_opacity;
 #endif
 
-
 void main() {
-    
+
 #ifdef HAS_UNIFORM_u_color
     highp vec4 color = u_color;
 #endif
 
-    
+
 #ifdef HAS_UNIFORM_u_opacity
     lowp float opacity = u_opacity;
 #endif
-
 
     gl_FragColor = color * opacity;
 
 #ifdef OVERDRAW_INSPECTOR
     gl_FragColor = vec4(1.0);
 #endif
-}
-
-*/
+})MBGL_SHADER";
 
 } // namespace shaders
 } // namespace mbgl
